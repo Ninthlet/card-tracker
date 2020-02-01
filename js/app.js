@@ -1,3 +1,10 @@
+/*
+If for whatever reason you find this code.
+I just want to say that I never used angular and usually I keep my code organized.
+This time I just chose to let Jesus take the keyboard.
+Godspeed random code inspector.
+*/
+
 var app = angular.module("card-container", []);
 
 var checkStorage = function () {
@@ -10,49 +17,34 @@ var checkStorage = function () {
     }
 }
 
-var getCards = function () {
-    if (!checkStorage())
-        return [];
-
-    var cards = JSON.parse(localStorage.getItem("CARDS_STORED"));
-    if (!cards) {
-        console.log("No cards stored found. Returning empty array");
-        return [];
-    }
-    return cards;
-}
-
-var saveCards = function (cards) {
-    if (!checkStorage()) {
-        console.error("Cannot save data!");
-        return;
-    }
-    var JSONObj = getCardsJSON(cards);
-    localStorage.setItem("CARDS_STORED", JSONObj);
-    console.log("Saved cards. Object: " + JSONObj);
-}
-
-var getCardsJSON = function (cards) {
-    return JSON.stringify(cards);
-}
-
-var createCard = function (title, notes, date) {
-    // cause im lazy and dont wanna fix the json function for dates zzzz
-    var formattedDateAdded = ((date.getDate() < 10) ? "0" + date.getDate() : date.getDate()) +
-        "/" + (((date.getMonth() + 1) < 10) ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) +
-        "/" + date.getFullYear();
-    return {
-        title: title,
-        notes: notes,
-        dateAdded: formattedDateAdded
-    };
-}
-
 app.controller("card-controller", function ($scope) {
+    // Here we only need to check newly added fields since the first commit
+    $scope.integrityCheck = function () {
+        for (var i = 0; i < $scope.cards.length; i++) {
+            if (!$scope.cards[i].total || $scope.cards[i].total === undefined) {
+                $scope.cards[i].total = 1;
+            }
+            if (!$scope.cards[i].dateUpdated || $scope.cards[i].dateUpdated === undefined) {
+                $scope.cards[i].dateUpdated = formatDate(new Date());
+            }
+        }
+        saveCards($scope.cards);
+    }
+    $scope.generateIndex = function () {
+        indexedCards = [];
+        for (var i = 0; i < $scope.cards.length; i++) {
+            indexedCards.push($scope.cards[i].title.toLowerCase());
+        }
+        console.log("Generated index for cards");
+        saveCards($scope.cards);
+    }
+
     $scope.ncDate = new Date();
     $scope.ncTitle = '';
     $scope.ncNotes = '';
     $scope.cards = getCards();
+    $scope.integrityCheck();
+    $scope.generateIndex();
     $scope.jumbotronShow = function () {
         if ($scope.cards.length == 0) {
             $('#noCards').show();
@@ -62,9 +54,46 @@ app.controller("card-controller", function ($scope) {
         }
     }
     $scope.addCard = function () {
-        var card = createCard($scope.ncTitle, $scope.ncNotes, $scope.ncDate);
-        $scope.cards.push(card);
+        var card = createCard($scope.ncTitle, $scope.ncNotes, $scope.ncDate, $scope.ncDate);
+        var isUnique = true;
+        if ($scope.cards.length != 0) {
+            for (var i = 0; i < $scope.cards.length; i++) {
+                if (card.sameName($scope.cards[i].title)) {
+                    // TODO call a warning
+                    console.log("Same name found");
+                    $scope.cards[i].dateUpdated = card.dateUpdated;
+                    $scope.cards[i].total += 1;
+                    isUnique = false;
+                    break;
+                }
+            }
+        }
+        if (isUnique) {
+            indexedCards.push(card.title);
+            $scope.cards.push(card);
+        }
         $scope.jumbotronShow();
         saveCards($scope.cards);
     }
+
+    $scope.searchResults = [];
+    $scope.searchCard = function () {
+        if ($scope.searching === '') {
+            $scope.searchResults = [];
+        } else {
+            var expr = new RegExp($scope.searching.toLowerCase());
+            for (var i = 0; i < $scope.cards.length; i++) {
+                if (expr.test($scope.cards[i].title.toLowerCase())) {
+                    $scope.searchResults.push($scope.cards[i]);
+                    $('#searchResult').collapse('show');
+                } else {
+                    $scope.searchResults.splice(i);
+                }
+            }
+        }
+        if ($scope.searchResults.length === 0) {
+            $('#searchResult').collapse('hide');
+        }
+    }
+
 });
