@@ -47,6 +47,7 @@
                     <div class="collapse col" id="collapseAddCard">
                         <div class="card card-body">
                             <!-- Card inputs -->
+
                             <div>
                                 <form ng-submit="addCard()" class="col w-100">
                                     <div class="form-group">
@@ -75,8 +76,10 @@
                                         <button type="submit" class="btn btn-primary">Aggiungi</button>
                                     </div>
                                 </form>
-                                <div class="col">
-                                    <h5></h5>
+                                <div class="alert alert-warning" style="display: none" id="cardDuplicateWarning">
+                                    <strong>Carta già inserita!</strong><br> Premi di nuovo "Aggiungi" per
+                                    inserirla lo
+                                    stesso.
                                 </div>
                             </div>
                         </div>

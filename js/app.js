@@ -38,7 +38,7 @@ app.controller("card-controller", function ($scope) {
         console.log("Generated index for cards");
         saveCards($scope.cards);
     }
-
+    $scope.cardExistsWarning = false;
     $scope.ncDate = new Date();
     $scope.ncTitle = '';
     $scope.ncNotes = '';
@@ -59,10 +59,15 @@ app.controller("card-controller", function ($scope) {
         if ($scope.cards.length != 0) {
             for (var i = 0; i < $scope.cards.length; i++) {
                 if (card.sameName($scope.cards[i].title)) {
-                    // TODO call a warning
-                    console.log("Same name found");
-                    $scope.cards[i].dateUpdated = card.dateUpdated;
-                    $scope.cards[i].total += 1;
+                    if (!$scope.cardExistsWarning) {
+                        $scope.cardExistsWarning = true;
+                        $('#cardDuplicateWarning').show();
+                    } else {
+                        $('#cardDuplicateWarning').hide();
+                        $scope.cardExistsWarning = false;
+                        $scope.cards[i].dateUpdated = card.dateUpdated;
+                        $scope.cards[i].total += 1;
+                    }
                     isUnique = false;
                     break;
                 }
@@ -78,6 +83,7 @@ app.controller("card-controller", function ($scope) {
 
     $scope.searchResults = [];
     $scope.searchCard = function () {
+        $scope.searchResult = [];
         if ($scope.searching === '') {
             $scope.searchResults = [];
         } else {
