@@ -35,15 +35,29 @@
                 </div>
                 <div id="accordion">
                     <div class="mt-2 mb-2">
-                        <button class="btn btn-primary" type="button" data-toggle="collapse"
-                            data-target="#collapseAddCard" aria-expanded="false" aria-controls="collapseAddCard"
-                            onclick="checkStorage()">
-                            Aggiungi carta
-                        </button>
-                        <button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+
+                        <!--
+                            <button class="btn btn-outline-primary" type="button" data-toggle="collapse"
                             data-target="#collapseSearchCard" aria-expanded="false" aria-controls="collapseSearchCard">
                             Cerca carta
                         </button>
+                        -->
+                        <div class="input-group col-md-4">
+                            <button class="btn btn-primary" type="button" data-toggle="collapse"
+                                data-target="#collapseAddCard" aria-expanded="false" aria-controls="collapseAddCard"
+                                onclick="checkStorage()">
+                                Aggiungi carta
+                            </button>
+                            <input class="form-control py-2 ml-3 rounded-left" type="search" placeholder="Ricerca..."
+                                ng-model="searching" ng-change="searchCard()">
+                            <span class="input-group-append">
+                                <button
+                                    class="rounded-right btn btn-outline-{{(searchResults.length > 0) ? 'success' : 'secondary'}}"
+                                    type="button">
+                                    {{searchResults.length}}
+                                </button>
+                            </span>
+                        </div>
                     </div>
                     <div class="collapse" id="collapseAddCard">
                         <div class="card card-body">
@@ -86,46 +100,19 @@
                             </div>
                         </div>
                     </div>
-                    <div class="collapse" id="collapseSearchCard">
-                        <div class="card card-body">
-                            <div class="form-group">
-                                <span class="badge badge-{{(searchResults.length > 0) ? 'success' : 'secondary'}}">
-                                    {{searchResults.length}}
-                                    {{searchResults.length === 1 ? 'carta trovata' : 'carte trovate'}}</span><br>
-                                <label for="search-card">Nome carta:</label>
-                                <input ng-model="searching" ng-change="searchCard()" type="text" class="form-control"
-                                    id="search-card" placeholder="Inizia a scrivere il nome della carta...">
-                            </div>
-                            <!-- RESULT CARD -->
-                            <div ng-repeat="result in searchResults track by $index">
-                                <div class="card mx-2 my-2 border border-success">
-                                    <div class="card-body">
-                                        <span
-                                            class="badge badge-success float-right mt-n3 mr-n3">{{(result.total > 1) ? result.total : ''}}</span>
-                                        <h5 class="card-title">{{result.title}}</h5>
-                                        <p class="card-text text-muted">{{result.notes}}</p>
-                                    </div>
-                                    <div class="card-footer text-muted">
-                                        <small>Creata: {{result.dateAdded}}<br>
-                                            Aggiornata: {{result.dateUpdated}}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <!-- END - Storage and new card function -->
                 <!-- END - Navbar and shits -->
                 <!-- START - Cards population -->
-                <div class="d-flex flex-wrap" ng-init="jumbotronShow()">
+                <div class="d-flex flex-wrap" ng-init=";cardsShow=cards;jumbotronShow()" ng-model="cardsShow">
                     <div class="jumbotron" id="noCards">
-                        <h1 class="display-4">Nessuna carta da mostrare</h1>
+                        <h1 class="display-4">Nessuna carta {{searching !== 0 ? 'trovata' : 'da mostrare'}}</h1>
                     </div>
-                    <div ng-repeat="card in cards track by $index">
-                        <div class="card mx-2 my-2">
+                    <div ng-repeat="card in cardsShow track by $index">
+                        <div class="card mx-2 my-2 {{searchResults.length > 0  ? 'border border-success' : ''}}">
                             <div class="card-body">
                                 <span
-                                    class="badge badge-primary float-right mt-n3 mr-n3">{{(card.total > 1) ? card.total : ''}}</span>
+                                    class="badge badge-{{(searchResults.length > 0) ? 'success' : 'primary'}} float-right mt-n3 mr-n3">{{(card.total > 1) ? card.total : ''}}</span>
                                 <h5 class="card-title">{{card.title}}</h5>
                                 <p class="card-text text-muted">{{card.notes}}</p>
                             </div>

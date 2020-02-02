@@ -46,7 +46,7 @@ app.controller("card-controller", function ($scope) {
     $scope.integrityCheck();
     $scope.generateIndex();
     $scope.jumbotronShow = function () {
-        if ($scope.cards.length == 0) {
+        if ($scope.cardsShow.length == 0) {
             $('#noCards').show();
         }
         else {
@@ -65,12 +65,16 @@ app.controller("card-controller", function ($scope) {
                     } else {
                         $('#cardDuplicateWarning').hide();
                         $scope.cardExistsWarning = false;
-                        if(modify){
+                        if (modify) {
                             $scope.cards[i].notes = card.notes;
-                        }else{
+                        } else {
                             $scope.cards[i].total += 1;
                         }
                         $scope.cards[i].dateUpdated = card.dateUpdated;
+                        $('#collapseAddCard').collapse('hide');
+                        $scope.ncTitle = '';
+                        $scope.ncNotes = '';
+                        $scope.ncDate = new Date();
                     }
                     isUnique = false;
                     break;
@@ -80,6 +84,10 @@ app.controller("card-controller", function ($scope) {
         if (isUnique) {
             indexedCards.push(card.title);
             $scope.cards.push(card);
+            $('#collapseAddCard').collapse('hide');
+            $scope.ncTitle = '';
+            $scope.ncNotes = '';
+            $scope.ncDate = new Date();
         }
         $scope.jumbotronShow();
         saveCards($scope.cards);
@@ -89,17 +97,19 @@ app.controller("card-controller", function ($scope) {
     $scope.searchCard = function () {
         $scope.searchResults = [];
         if ($scope.searching !== '') {
+            $scope.cardsShow = $scope.searchResults;
             var expr = new RegExp($scope.searching.toLowerCase());
             for (var i = 0; i < $scope.cards.length; i++) {
                 if (expr.test($scope.cards[i].title.toLowerCase())) {
                     $scope.searchResults.push($scope.cards[i]);
-                    $('#searchResult').collapse('show');
+
                 }
             }
+        } else {
+            $scope.cardsShow = $scope.cards;
         }
-        if ($scope.searchResults.length === 0) {
-            $('#searchResult').collapse('hide');
-        }
+        $('#collapseAddCard').collapse('hide');
+        $scope.jumbotronShow();
     }
 
 });
