@@ -6,10 +6,15 @@ function Card(title, notes, dateAdded, dateUpdated) {
     this.total = 1;
 }
 
-var indexedCards = [];
+function Card(title, notes, dateAdded, dateUpdated, total) {
+    this.title = title;
+    this.notes = notes;
+    this.dateAdded = dateAdded;
+    this.dateUpdated = dateUpdated;
+    this.total = total;
+}
 
 Card.prototype.sameName = function (title) {
-    console.log("current: " + this.title + " param: " + title);
     if (this.title === title)
         return true;
     return false
@@ -35,7 +40,6 @@ var saveCards = function (cards) {
     }
     var JSONObj = getCardsJSON(cards);
     localStorage.setItem("CARDS_STORED", JSONObj);
-    console.log("Saved cards. Object: " + JSONObj);
 }
 
 var getCardsJSON = function (cards) {
@@ -48,10 +52,10 @@ var formatDate = function(date){
     "/" + date.getFullYear();
 }
 
-var createCard = function (title, notes, date) {
+var createCard = function (title, notes) {
     // cause im lazy and dont wanna fix the json function for dates zzzz
-    var formattedDate = formatDate(date);
-    return new Card(title, notes, formattedDate, formattedDate);
+    var formattedDate = formatDate(new Date());
+    return new Card(title, notes, formattedDate, formattedDate, 1);
 }
 
 var checkIfExists = function (cards, title) {

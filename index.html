@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="lib/css/bootstrap.min.css">
 </head>
 
-<body>
+<body ng-app="card-container" ng-controller="card-controller">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="HandheldFriendly" content="true">
     <nav>
@@ -26,7 +26,7 @@
     <div class="tab-content" id="nav-tabContent">
         <!-- NAVBAR HOME-->
         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-            <div class="container-fluid" ng-app="card-container" ng-controller="card-controller">
+            <div class="container-fluid">
                 <!-- START - Navbar and shits -->
                 <!-- START - Storage and new card function -->
                 <div class="alert alert-danger alert-dismissable" style="display: none" id="dataErrorAlert">
@@ -51,11 +51,11 @@
                             <input class="form-control py-2 ml-3 rounded-left" type="search" placeholder="Ricerca..."
                                 ng-model="searching" ng-change="searchCard()">
                             <span class="input-group-append">
-                                <button
-                                    class="rounded-right btn btn-outline-{{(searchResults.length > 0) ? 'success' : 'secondary'}}"
-                                    type="button">
+                                <span
+                                    class="rounded-right btn btn-{{(searchResults.length > 0) ? 'success' : 'outline-secondary'}}"
+                                    style="pointer-events: none;">
                                     {{searchResults.length}}
-                                </button>
+                                </span>
                             </span>
                         </div>
                     </div>
@@ -69,23 +69,23 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon3">Nome</span>
                                         </div>
-                                        <input type="text" class="form-control" id="card-name"
+                                        <input autocomplete="off" type="text" class="form-control" id="card-name"
                                             aria-describedby="basic-addon3" ng-model="ncTitle" required="required">
                                     </div>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon3">Note</span>
                                         </div>
-                                        <input type="text" class="form-control" id="card-notes"
-                                            aria-describedby="basic-addon3" ng-model="ncNotes">
+                                        <textarea autocomplete="off" type="text" class="form-control" id="card-notes"
+                                            rows="3" aria-describedby="basic-addon3" ng-model="ncNotes"></textarea>
                                     </div>
-                                    <div class="input-group mb-3">
+                                    <!-- <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon3">Data</span>
                                         </div>
                                         <input type="date" class="form-control" id="card-date"
                                             aria-describedby="basic-addon3" ng-model="ncDate" required="required">
-                                    </div>
+                                    </div>-->
                                     <button type="submit" class="btn btn-primary"
                                         ng-click="modifyAction = false">Aggiungi</button>
                                     <button type="submit"
@@ -128,8 +128,124 @@
         </div>
 
         <!-- NAVBAR MANAGE-->
-        <div class="tab-pane fade" id="nav-manage" role="tabpanel" aria-labelledby="nav-manage-tab">
-            <p>Henlo?</p>
+        <div class="tab-pane fade" id="nav-manage" role="tabpanel" aria-labelledby="nav-manage-tab"
+            ng-model="detailCards" ng-init="detailCards=cards;orderByArrow='↓'">
+            <nav class="navbar navbar-light bg-light">
+                <form class="form-inline">
+                    <a class="navbar-brand" href="#">Ordina per...</a>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="options" id="option1" autocomplete="off" checked
+                                ng-click="sortBy('name')">Nome
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="options" id="option2" autocomplete="off"
+                                ng-click="sortBy('name')">Creazione
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="options" id="option3" autocomplete="off"
+                                ng-click="sortBy('name')">Aggiornata
+                        </label>
+                    </div>
+                    <button class="btn btn-secondary ml-3 px-3" type="button"
+                        ng-click="sortBy('name');orderByArrow=(orderByArrow === '↓') ? '↑' : '↓'"
+                        ng-bind="orderByArrow"></button>
+                    <div class="input-group col-md-4 ml-n3">
+                        <input class="form-control py-2 ml-3 rounded-left" type="search" placeholder="Ricerca..."
+                            ng-model="searchingDetail" ng-change="searchCardDetail()">
+                        <span class="input-group-append">
+                            <span
+                                class="rounded-right btn btn-{{(searchResults.length > 0) ? 'success' : 'outline-secondary'}}"
+                                style="pointer-events: none;">
+                                {{searchResults.length}}
+                            </span>
+                        </span>
+                    </div>
+                </form>
+            </nav>
+            <div id="accordion">
+                <div class="card" ng-repeat="card in detailCards track by $index">
+                    <span id="{{'headingToDelete'+$index}}">
+                        <div class="card-header" id="{{'heading'+$index}}" data-toggle="collapse"
+                            data-target="#{{'collapse'+$index}}" aria-expanded="true"
+                            aria-controls="{{'collapse'+$index}}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <button class="btn btn-link">
+                                    <h4>{{card.title}}</h4>
+                                </button>
+                                <small class="text-muted">Creata il {{card.dateAdded}}</small>
+                            </div>
+                            <div class="d-flex w-100 justify-content-between my-n1 mx-3">
+                                <small class="text-muted">
+                                    {{card.notes !== '' ? 'Note: ' + card.notes : ''}}
+                                </small>
+                            </div>
+                        </div>
+                        <div id="{{'collapse'+$index}}" class="collapse hide" aria-labelledby="{{'heading'+$index}}"
+                            data-parent="#accordion">
+                            <div class="card-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item active">
+                                        <h5>Valori attuali</h5>
+                                    </li>
+                                    <li class="list-group-item"><strong>Nome:</strong><br>{{card.title}}</li>
+                                    <li class="list-group-item"><strong>Note:</strong><br> <span
+                                            class="{{card.notes !== '' ? '' : 'font-italic'}}">{{card.notes !== '' ? card.notes : 'Nessuna nota presente'}}</span>
+                                    </li>
+                                    <li class="list-group-item"><strong>Totale:</strong><br> {{card.total}}</li>
+                                    <li class="list-group-item text-muted small">Data creazione: {{card.dateAdded}}<br>
+                                        Data ultimo aggiornamento: {{card.dateUpdated}}</li>
+                                </ul>
+                                <ul class="list-group mt-3">
+                                    <li class="list-group-item active">
+                                        <h5>Modifica</h5>
+                                    </li>
+                                    <form ng-model="deleteConfirm"  
+                                        ng-init="deleteConfirm=false"
+                                        ng-submit="modifyCard($index, modifyTitle, modifyNotes, modifyTotal, deleteConfirm)">
+                                        <li class="list-group-item">
+                                            <div class="form-group">
+                                                <label for="inputName">Nuovo nome:</label>
+                                                <input autocomplete="off" type="text" class="form-control"
+                                                    id="inputName" required="required" placeholder="Inserisci nome"
+                                                    ng-bind="modifyTitle" ng-model="modifyTitle" ng-init="modifyTitle=card.title">
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="form-group">
+                                                <label for="inputNotes">Nuove note:</label>
+                                                <textarea autocomplete="off" type="text" class="form-control"
+                                                    placeholder="Inserisci note" rows="3"
+                                                    ng-bind="modifyNotes" ng-model="modifyNotes" ng-init="modifyNotes=card.notes"></textarea>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="form-group">
+                                                <label for="inputTotal">Totale:</label>
+                                                <input type="number" class="form-control" id="inputTotal"
+                                                    required="required" placeholder="Inserisci totale"
+                                                    ng-bind="modifyTotal" ng-model="modifyTotal" ng-init="modifyTotal=card.total">
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <button class="btn btn-primary" ng-click="deleteConfirm = false"
+                                                type="submit">Conferma</button>
+                                            <button class="btn btn-danger" ng-click="deleteConfirm = true"
+                                                type="submit">Elimina</button>
+                                            <div class="alert alert-danger mt-2" style="display: none"
+                                                id="{{'confirmDeleteCard'+$index}}">
+                                                Stai per cancellare una carta.<br>
+                                                Premi di nuovo 'Elimina' per confermare
+                                            </div>
+                                        </li>
+                                    </form>
+                                </ul>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </div>
         </div>
 
         <!-- NAVBAR SETTINGS-->

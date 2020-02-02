@@ -30,21 +30,12 @@ app.controller("card-controller", function ($scope) {
         }
         saveCards($scope.cards);
     }
-    $scope.generateIndex = function () {
-        indexedCards = [];
-        for (var i = 0; i < $scope.cards.length; i++) {
-            indexedCards.push($scope.cards[i].title.toLowerCase());
-        }
-        console.log("Generated index for cards");
-        saveCards($scope.cards);
-    }
     $scope.cardExistsWarning = false;
     $scope.ncDate = new Date();
     $scope.ncTitle = '';
     $scope.ncNotes = '';
     $scope.cards = getCards();
     $scope.integrityCheck();
-    $scope.generateIndex();
     $scope.jumbotronShow = function () {
         if ($scope.cardsShow.length == 0) {
             $('#noCards').show();
@@ -54,7 +45,7 @@ app.controller("card-controller", function ($scope) {
         }
     }
     $scope.addCard = function (modify) {
-        var card = createCard($scope.ncTitle, $scope.ncNotes, $scope.ncDate, $scope.ncDate);
+        var card = createCard($scope.ncTitle, $scope.ncNotes);
         var isUnique = true;
         if ($scope.cards.length != 0) {
             for (var i = 0; i < $scope.cards.length; i++) {
@@ -82,7 +73,6 @@ app.controller("card-controller", function ($scope) {
             }
         }
         if (isUnique) {
-            indexedCards.push(card.title);
             $scope.cards.push(card);
             $('#collapseAddCard').collapse('hide');
             $scope.ncTitle = '';
@@ -102,7 +92,6 @@ app.controller("card-controller", function ($scope) {
             for (var i = 0; i < $scope.cards.length; i++) {
                 if (expr.test($scope.cards[i].title.toLowerCase())) {
                     $scope.searchResults.push($scope.cards[i]);
-
                 }
             }
         } else {
@@ -110,6 +99,50 @@ app.controller("card-controller", function ($scope) {
         }
         $('#collapseAddCard').collapse('hide');
         $scope.jumbotronShow();
+    }
+
+    $scope.searchDetailResults = [];
+    $scope.searchCardDetail = function () {
+        $scope.searchDetailResults = [];
+        if ($scope.searchingDetail !== '') {
+            $scope.detailCards = $scope.searchDetailResults;
+            var expr = new RegExp($scope.searchingDetail.toLowerCase());
+            for (var i = 0; i < $scope.cards.length; i++) {
+                if (expr.test($scope.cards[i].title.toLowerCase())) {
+                    $scope.searchDetailResults.push($scope.cards[i]);
+                }
+            }
+        } else {
+            $scope.detailCards = $scope.cards;
+        }
+    }
+
+    $scope.sortBy = function (type) {
+        if (type === 'name') {
+
+        }
+    }
+
+    $scope.deleteCard = false;
+    $scope.modifyCard = function (index, title, notes, total, deleteConfirm) {
+        if (deleteConfirm === true && $scope.deleteCard === false) {
+            $('#confirmDeleteCard' + index).show();
+            $scope.deleteCard = true;
+            return;
+        }
+        if ($scope.deleteCard === true) {
+            $('#headingToDelete' + index).empty();
+            $('#headingToDelete' + index).remove();
+            $scope.cards.splice(index, 1);
+        } else {
+            var newCard = new Card(title, notes, $scope.cards[index].dateAdded, formatDate(new Date()), total);
+            $scope.cards.splice(index, 1, newCard);
+        }
+        $scope.detailCards = $scope.cards;
+        $scope.cardsShow = $scope.cards;
+        $('#confirmDeleteCard').hide();
+        $scope.deleteCard = false;
+        saveCards($scope.cards);
     }
 
 });
