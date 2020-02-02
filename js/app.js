@@ -83,17 +83,13 @@ app.controller("card-controller", function ($scope) {
 
     $scope.searchResults = [];
     $scope.searchCard = function () {
-        $scope.searchResult = [];
-        if ($scope.searching === '') {
-            $scope.searchResults = [];
-        } else {
+        $scope.searchResults = [];
+        if ($scope.searching !== '') {
             var expr = new RegExp($scope.searching.toLowerCase());
             for (var i = 0; i < $scope.cards.length; i++) {
                 if (expr.test($scope.cards[i].title.toLowerCase())) {
                     $scope.searchResults.push($scope.cards[i]);
                     $('#searchResult').collapse('show');
-                } else {
-                    $scope.searchResults.splice(i);
                 }
             }
         }
