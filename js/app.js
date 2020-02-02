@@ -117,10 +117,79 @@ app.controller("card-controller", function ($scope) {
         }
     }
 
-    $scope.sortBy = function (type) {
-        if (type === 'name') {
+    $scope.updateViews = function () {
+        $scope.detailCards = $scope.cards;
+        $scope.cardsShow = $scope.cards;
+    }
 
+    $scope.lastSort = 'name';
+    $scope.sortBy = function (type, ascendent) {
+        console.log("type: " + type + " ascendent? " + ascendent);
+        if (type === 'sorting') {
+            type = $scope.lastSort;
         }
+        switch (type) {
+            case 'name':
+                if (ascendent === false) {
+                    $scope.cards.sort(function (a, b) {
+                        if (a.title > b.title)
+                            return -1;
+                        if (a.title < b.title)
+                            return 1;
+                        return 0;
+                    });
+                } else {
+                    $scope.cards.sort(function (a, b) {
+                        if (a.title < b.title)
+                            return -1;
+                        if (a.title > b.title)
+                            return 1;
+                        return 0;
+                    });
+                }
+                break;
+            case 'date':
+                if (ascendent === false) {
+                    $scope.cards.sort(function (a, b) {
+                        if (a.dateAdded > b.dateAdded)
+                            return -1;
+                        if (a.dateAdded < b.dateAdded)
+                            return 1;
+                        return 0;
+                    });
+                } else {
+                    $scope.cards.sort(function (a, b) {
+                        if (a.dateAdded < b.dateAdded)
+                            return -1;
+                        if (a.dateAdded > b.dateAdded)
+                            return 1;
+                        return 0;
+                    });
+                }
+                break;
+            case 'update':
+                if (ascendent === false) {
+                    $scope.cards.sort(function (a, b) {
+                        if (a.dateUpdated > b.dateUpdated)
+                            return -1;
+                        if (a.dateUpdated < b.dateUpdated)
+                            return 1;
+                        return 0;
+                    });
+                } else {
+                    $scope.cards.sort(function (a, b) {
+                        if (a.dateUpdated < b.dateUpdated)
+                            return -1;
+                        if (a.dateUpdated > b.dateUpdated)
+                            return 1;
+                        return 0;
+                    });
+                }
+                break;
+        }
+        $scope.lastSort = type;
+
+        $scope.detailCards = $scope.cards;
     }
 
     $scope.deleteCard = false;
@@ -138,8 +207,7 @@ app.controller("card-controller", function ($scope) {
             var newCard = new Card(title, notes, $scope.cards[index].dateAdded, formatDate(new Date()), total);
             $scope.cards.splice(index, 1, newCard);
         }
-        $scope.detailCards = $scope.cards;
-        $scope.cardsShow = $scope.cards;
+        $scope.updateViews();
         $('#confirmDeleteCard').hide();
         $scope.deleteCard = false;
         saveCards($scope.cards);

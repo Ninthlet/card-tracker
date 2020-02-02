@@ -133,23 +133,25 @@
             <nav class="navbar navbar-light bg-light">
                 <form class="form-inline">
                     <a class="navbar-brand" href="#">Ordina per...</a>
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <div class="btn-group btn-group-toggle my-2" data-toggle="buttons">
 
                         <label class="btn btn-secondary active">
                             <input type="radio" name="options" id="option1" autocomplete="off" checked
-                                ng-click="sortBy('name')">Nome
+                                ng-click="sortBy('name', ascendent)">Nome
                         </label>
                         <label class="btn btn-secondary">
                             <input type="radio" name="options" id="option2" autocomplete="off"
-                                ng-click="sortBy('name')">Creazione
+                                ng-click="sortBy('date', ascendent)">Creazione
                         </label>
                         <label class="btn btn-secondary">
                             <input type="radio" name="options" id="option3" autocomplete="off"
-                                ng-click="sortBy('name')">Aggiornata
+                                ng-click="sortBy('update', ascendent)">Aggiornata
                         </label>
                     </div>
                     <button class="btn btn-secondary ml-3 px-3" type="button"
-                        ng-click="sortBy('name');orderByArrow=(orderByArrow === '↓') ? '↑' : '↓'"
+                        ng-model="ascendent"
+                        ng-init="ascendent=false"
+                        ng-click="ascendent=!ascendent;sortBy('sorting', ascendent);orderByArrow=(orderByArrow === '↓') ? '↑' : '↓'"
                         ng-bind="orderByArrow"></button>
                     <div class="input-group col-md-4 ml-n3">
                         <input class="form-control py-2 ml-3 rounded-left" type="search" placeholder="Ricerca..."
