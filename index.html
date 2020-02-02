@@ -48,7 +48,7 @@
                     <div class="collapse" id="collapseAddCard">
                         <div class="card card-body">
                             <!-- Card inputs -->
-                            <form ng-submit="addCard()" class="col w-100">
+                            <form ng-submit="addCard(modifyAction)">
                                 <div class="form-group">
                                     <h5>Dati carta:</h5>
                                     <div class="input-group mb-3">
@@ -72,21 +72,26 @@
                                         <input type="date" class="form-control" id="card-date"
                                             aria-describedby="basic-addon3" ng-model="ncDate" required="required">
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Aggiungi</button>
+                                    <button type="submit" class="btn btn-primary"
+                                        ng-click="modifyAction = false">Aggiungi</button>
+                                    <button type="submit"
+                                        class="btn btn-primary {{(cardExistsWarning === true) ? '' : 'd-none'}}"
+                                        ng-click="modifyAction = true">Modifica</button>
                                 </div>
                             </form>
                             <div class="alert alert-warning" style="display: none" id="cardDuplicateWarning">
                                 <strong>Carta già inserita!</strong><br> Premi di nuovo "Aggiungi" per
                                 inserirla lo
-                                stesso.
+                                stesso oppure "Modifica" per modificare le note.
                             </div>
                         </div>
                     </div>
                     <div class="collapse" id="collapseSearchCard">
                         <div class="card card-body">
                             <div class="form-group">
-                                <span
-                                    class="badge badge-{{(searchResults.length > 0) ? 'success' : 'secondary'}}">{{searchResults.length}} carte trovate</span><br>
+                                <span class="badge badge-{{(searchResults.length > 0) ? 'success' : 'secondary'}}">
+                                    {{searchResults.length}}
+                                    {{searchResults.length === 1 ? 'carta trovata' : 'carte trovate'}}</span><br>
                                 <label for="search-card">Nome carta:</label>
                                 <input ng-model="searching" ng-change="searchCard()" type="text" class="form-control"
                                     id="search-card" placeholder="Inizia a scrivere il nome della carta...">
@@ -96,7 +101,7 @@
                                 <div class="card mx-2 my-2 border border-success">
                                     <div class="card-body">
                                         <span
-                                            class="badge badge-primary float-right mt-n3 mr-n3">{{(result.total > 1) ? result.total : ''}}</span>
+                                            class="badge badge-success float-right mt-n3 mr-n3">{{(result.total > 1) ? result.total : ''}}</span>
                                         <h5 class="card-title">{{result.title}}</h5>
                                         <p class="card-text text-muted">{{result.notes}}</p>
                                     </div>

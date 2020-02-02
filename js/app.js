@@ -53,7 +53,7 @@ app.controller("card-controller", function ($scope) {
             $('#noCards').hide();
         }
     }
-    $scope.addCard = function () {
+    $scope.addCard = function (modify) {
         var card = createCard($scope.ncTitle, $scope.ncNotes, $scope.ncDate, $scope.ncDate);
         var isUnique = true;
         if ($scope.cards.length != 0) {
@@ -65,8 +65,12 @@ app.controller("card-controller", function ($scope) {
                     } else {
                         $('#cardDuplicateWarning').hide();
                         $scope.cardExistsWarning = false;
+                        if(modify){
+                            $scope.cards[i].notes = card.notes;
+                        }else{
+                            $scope.cards[i].total += 1;
+                        }
                         $scope.cards[i].dateUpdated = card.dateUpdated;
-                        $scope.cards[i].total += 1;
                     }
                     isUnique = false;
                     break;
