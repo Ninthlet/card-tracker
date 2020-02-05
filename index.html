@@ -205,13 +205,13 @@
                                     </li>
                                     <form ng-model="deleteConfirm"  
                                         ng-init="deleteConfirm=false"
-                                        ng-submit="modifyCard($index, modifyTitle, modifyNotes, modifyTotal, deleteConfirm)">
+                                        ng-submit="modifyCard($index, card.title, card.notes, card.total, deleteConfirm)">
                                         <li class="list-group-item">
                                             <div class="form-group">
                                                 <label for="inputName">Nuovo nome:</label>
                                                 <input autocomplete="off" type="text" class="form-control"
                                                     id="inputName" required="required" placeholder="Inserisci nome"
-                                                    ng-bind="modifyTitle" ng-model="modifyTitle" ng-init="modifyTitle=card.title">
+                                                    ng-bind="card.title" ng-model="card.title">
                                             </div>
                                         </li>
                                         <li class="list-group-item">
@@ -219,7 +219,7 @@
                                                 <label for="inputNotes">Nuove note:</label>
                                                 <textarea autocomplete="off" type="text" class="form-control"
                                                     placeholder="Inserisci note" rows="3"
-                                                    ng-bind="modifyNotes" ng-model="modifyNotes" ng-init="modifyNotes=card.notes"></textarea>
+                                                    ng-bind="card.notes" ng-model="card.notes"></textarea>
                                             </div>
                                         </li>
                                         <li class="list-group-item">
@@ -227,7 +227,7 @@
                                                 <label for="inputTotal">Totale:</label>
                                                 <input type="number" class="form-control" id="inputTotal"
                                                     required="required" placeholder="Inserisci totale"
-                                                    ng-bind="modifyTotal" ng-model="modifyTotal" ng-init="modifyTotal=card.total">
+                                                    ng-bind="card.total" ng-model="card.total">
                                             </div>
                                         </li>
                                         <li class="list-group-item">
